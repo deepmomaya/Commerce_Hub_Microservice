@@ -4,18 +4,11 @@ A production-ready .NET 8 microservice for order and inventory management, built
 
 ## Tech Stack
 
-- **.NET 8** — Web API
+- **.NET** — Web API
 - **MongoDB** — Persistent storage for Orders and Products
 - **RabbitMQ** — Event messaging (OrderCreated events)
-- **Docker / Docker Compose** — One-command environment setup
-- **NUnit + Moq** — Unit testing
-
----
-
-## Prerequisites
-
-- [Docker Desktop](https://www.docker.com/products/docker-desktop/) (includes Docker Compose)
-- [.NET 8 SDK](https://dotnet.microsoft.com/en-us/download/dotnet/8.0) *(only needed to run tests locally)*
+- **Docker** — One-command environment setup
+- **NUnit** — Unit testing
 
 ---
 
