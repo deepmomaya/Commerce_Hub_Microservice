@@ -30,11 +30,6 @@ To stop:
 docker-compose down
 ```
 
-To stop and remove all data:
-```bash
-docker-compose down -v
-```
-
 ---
 
 ## API Endpoints
