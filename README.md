@@ -1,6 +1,6 @@
 # Commerce Hub Microservice
 
-A production-ready .NET 8 microservice for order and inventory management, built with MongoDB, RabbitMQ, and Docker.
+A production-ready .NET microservice for order and inventory management, built with MongoDB, RabbitMQ, and Docker.
 
 ## Tech Stack
 
