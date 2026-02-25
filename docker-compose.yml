@@ -1,0 +1,68 @@
+version: "3.9"
+
+services:
+  # ── MongoDB ───────────────────────────────────────────────────────────────────
+  mongodb:
+    image: mongo:7
+    container_name: commercehub_mongo
+    restart: unless-stopped
+    ports:
+      - "27017:27017"
+    volumes:
+      - mongo_data:/data/db
+      - ./mongo-init/init.js:/docker-entrypoint-initdb.d/init.js:ro
+    environment:
+      MONGO_INITDB_DATABASE: CommerceHub
+    healthcheck:
+      test: ["CMD", "mongosh", "--eval", "db.adminCommand('ping')"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 20s
+
+  # ── RabbitMQ ──────────────────────────────────────────────────────────────────
+  rabbitmq:
+    image: rabbitmq:3.13-management
+    container_name: commercehub_rabbitmq
+    restart: unless-stopped
+    ports:
+      - "5672:5672"    # AMQP
+      - "15672:15672"  # Management UI (admin / admin)
+    environment:
+      RABBITMQ_DEFAULT_USER: admin
+      RABBITMQ_DEFAULT_PASS: admin
+    healthcheck:
+      test: ["CMD", "rabbitmq-diagnostics", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 10
+      start_period: 30s
+
+  # ── .NET API ──────────────────────────────────────────────────────────────────
+  api:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: commercehub_api
+    restart: unless-stopped
+    ports:
+      - "8080:8080"
+    depends_on:
+      mongodb:
+        condition: service_healthy
+      rabbitmq:
+        condition: service_healthy
+    environment:
+      ASPNETCORE_ENVIRONMENT: Production
+      MongoDbSettings__ConnectionString: mongodb://mongodb:27017
+      MongoDbSettings__DatabaseName: CommerceHub
+      MongoDbSettings__OrdersCollection: Orders
+      MongoDbSettings__ProductsCollection: Products
+      RabbitMqSettings__HostName: rabbitmq
+      RabbitMqSettings__Port: 5672
+      RabbitMqSettings__UserName: admin
+      RabbitMqSettings__Password: admin
+      RabbitMqSettings__OrderCreatedQueue: order.created
+
+volumes:
+  mongo_data:
